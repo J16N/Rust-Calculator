@@ -23,7 +23,12 @@ fn visit(expr: Expressions) -> Result<Token, String> {
                     Token::Operator('+') => Ok(Token::Number(left + right)),
                     Token::Operator('-') => Ok(Token::Number(left - right)),
                     Token::Operator('*') => Ok(Token::Number(left * right)),
-                    Token::Operator('/') => Ok(Token::Number(left / right)),
+                    Token::Operator('/') => {
+                        if right == &0.0 {
+                            return Err("Division by zero".to_string());
+                        }
+                        Ok(Token::Number(left / right))
+                    }
                     _ => {
                         let op: String = operator.into();
                         Err(format!("Invalid operator: {}", op))
