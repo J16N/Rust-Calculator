@@ -7,16 +7,6 @@ use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-extern "C" {
-    fn alert(s: &str);
-}
-
-#[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, rust-calc!");
-}
-
-#[wasm_bindgen]
 pub fn execute(expression: String) -> Result<JsValue, JsError> {
     set_panic_hook();
     let tokens = scanner::tokenize(expression)?;
