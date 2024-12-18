@@ -1,8 +1,8 @@
 [package]
 name = "rust-calc"
 version = "0.1.0"
-authors = ["J16N <jishan2001bhattacharya@gmail.com>"]
-edition = "2018"
+authors = ["J16N"]
+edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -11,7 +11,7 @@ crate-type = ["cdylib", "rlib"]
 default = ["console_error_panic_hook"]
 
 [dependencies]
-wasm-bindgen = "0.2.84"
+wasm-bindgen = "0.2.92"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
@@ -20,9 +20,12 @@ wasm-bindgen = "0.2.84"
 console_error_panic_hook = { version = "0.1.7", optional = true }
 
 [dev-dependencies]
-wasm-bindgen-test = "0.3.34"
+wasm-bindgen-test = "0.3.42"
 
 [profile.release]
 # Tell `rustc` to optimize for small code size.
 opt-level = "s"
 lto = true
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-Oz", "--enable-mutable-globals"]
