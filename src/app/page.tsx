@@ -12,6 +12,41 @@ export default function Home() {
   const [modal, showModal] = useState(false);
   const [modalContent, setModalContent] = useState("");
   let modalTimeout: NodeJS.Timeout;
+  const handleInput = async () => {
+    if (!wasm_init) {
+      wasm_init = true;
+      await init();
+    }
+    if (value === "") {
+      return;
+    }
+    try {
+      const result = execute(value);
+      const v = [];
+      let no_operators = true;
+      for (const c of value) {
+        if (c === "+" || c === "-" || c === "*" || c === "/") {
+          v.push(` ${c} `);
+          no_operators = false;
+        }
+        else {
+          v.push(c);
+        }
+      }
+      const expr = v.join("");
+      const res = no_operators ? `${expr}` : `${expr} = ${result}`;
+      setItems([...items, res]);
+    }
+    catch (err) {
+      clearTimeout(modalTimeout);
+      setModalContent((err as Error).toString());
+      showModal(true);
+
+      modalTimeout = setTimeout(() => {
+        showModal(false);
+      }, 3000);
+    }
+  };
 
   return (
     <>
@@ -32,42 +67,13 @@ export default function Home() {
               return;
             }
             setValue(e.target.value);
-          }} />
-        <button className={styles.submitButton} onClick={async () => {
-          if (!wasm_init) {
-            wasm_init = true;
-            await init();
-          }
-          if (value === "") {
-            return;
-          }
-          try {
-            const result = execute(value);
-            const v = [];
-            let no_operators = true;
-            for (const c of value) {
-              if (c === "+" || c === "-" || c === "*" || c === "/") {
-                v.push(` ${c} `);
-                no_operators = false;
-              }
-              else {
-                v.push(c);
-              }
+          }}
+          onKeyDown={e => {
+            if (e.key === "Enter") {
+              handleInput();
             }
-            const expr = v.join("");
-            const res = no_operators ? `${expr}` : `${expr} = ${result}`;
-            setItems([...items, res]);
-          }
-          catch (err) {
-            clearTimeout(modalTimeout);
-            setModalContent((err as Error).toString());
-            showModal(true);
-
-            modalTimeout = setTimeout(() => {
-              showModal(false);
-            }, 3000);
-          }
-        }}></button>
+          }} />
+        <button className={styles.submitButton} onClick={handleInput}></button>
       </div>
       <div className={styles.modal + " " + (modal ? styles.showModal : "")}>{modalContent}</div >
     </>
