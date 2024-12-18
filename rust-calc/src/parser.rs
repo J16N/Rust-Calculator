@@ -1,3 +1,5 @@
+use wasm_bindgen::JsError;
+
 use crate::scanner::Token;
 use std::iter::Peekable;
 use std::vec::IntoIter;
@@ -20,9 +22,12 @@ pub(super) enum Expressions {
     },
 }
 
-pub(super) fn parse(tokens: Vec<Token>) -> Result<Expressions, String> {
+pub(super) fn parse(tokens: Vec<Token>) -> Result<Expressions, JsError> {
     let mut tokens = tokens.into_iter().peekable();
-    let expression = term(&mut tokens)?;
+    let expression = match term(&mut tokens) {
+        Ok(expression) => expression,
+        Err(error) => return Err(JsError::new(&error)),
+    };
     Ok(expression)
 }
 

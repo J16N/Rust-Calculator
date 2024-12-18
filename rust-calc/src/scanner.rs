@@ -1,11 +1,24 @@
+use wasm_bindgen::JsError;
+
 pub(super) enum Token {
     Number(f64),
     Operator(char),
     Parenthesis(char),
-    EOF,
+    Eof,
 }
 
-pub(super) fn tokenize(expression: String) -> Result<Vec<Token>, String> {
+impl From<Token> for String {
+    fn from(token: Token) -> String {
+        match token {
+            Token::Number(number) => number.to_string(),
+            Token::Operator(operator) => operator.to_string(),
+            Token::Parenthesis(parenthesis) => parenthesis.to_string(),
+            Token::Eof => "EOF".to_string(),
+        }
+    }
+}
+
+pub(super) fn tokenize(expression: String) -> Result<Vec<Token>, JsError> {
     let mut tokens = Vec::new();
     let mut chars_iters = expression.chars().peekable();
     while let Some(char) = chars_iters.next() {
@@ -32,9 +45,9 @@ pub(super) fn tokenize(expression: String) -> Result<Vec<Token>, String> {
             }
             '+' | '-' | '*' | '/' => tokens.push(Token::Operator(char)),
             '(' | ')' => tokens.push(Token::Parenthesis(char)),
-            _ => return Err(format!("Invalid character: {}", char)),
+            _ => return Err(JsError::new(&format!("Invalid character: {}", char))),
         }
     }
-    tokens.push(Token::EOF);
+    tokens.push(Token::Eof);
     Ok(tokens)
 }
