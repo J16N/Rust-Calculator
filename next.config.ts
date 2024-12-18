@@ -9,14 +9,7 @@ const nextConfig: NextConfig = {
         : "static/wasm/[modulehash].wasm";
 
     // Since Webpack 5 doesn't enable WebAssembly by default, we should do it manually
-    config.experiments = {
-      ...config.experiments,
-      asyncWebAssembly: true,
-      layers: true,
-      lazyCompilation: true,
-      syncWebAssembly: true,
-      topLevelAwait: true,
-    };
+    config.experiments = { ...config.experiments, asyncWebAssembly: true };
 
     return config;
   }
