@@ -3,18 +3,15 @@
 // import Image from "next/image";
 import styles from "./page.module.css";
 import { useState } from "react";
-// import init, { greet } from "rust-calc";
+import init, { execute } from "rust-calc";
 
 export default function Home() {
-  // (async function () {
-  //   await init();
-  //   greet();
-  // })();
-
+  let wasm_init = false;
   const [value, setValue] = useState("");
 
   return (
     <div className={styles.page}>
+      <div className={styles.history}></div>
       <input
         placeholder="Enter expression"
         type="text"
@@ -25,7 +22,22 @@ export default function Home() {
           }
           setValue(e.target.value);
         }} />
-      <button className={styles.submitButton}></button>
+      <button className={styles.submitButton} onClick={async () => {
+        if (!wasm_init) {
+          wasm_init = true;
+          await init();
+        }
+        if (value === "") {
+          return;
+        }
+        try {
+          const result = execute(value);
+          setValue(result);
+        }
+        catch (e) {
+          console.error(e);
+        }
+      }}></button>
     </div>
   );
 }
