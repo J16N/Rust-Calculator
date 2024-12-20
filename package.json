@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:wasm": "wasm-pack build --release --target web rust-calc --out-dir ../pkg",
+    "build:wasm": "wasm-pack build --release --target web rust-calc --out-dir ../pkg && rm pkg/.gitignore",
     "start": "next start",
     "lint": "next lint"
   },
